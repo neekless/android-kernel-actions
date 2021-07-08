@@ -200,6 +200,8 @@ start_time="$(date +%s)"
 date="$(date +%d%m%Y-%I%M)"
 tag="$(git branch | sed 's/*\ //g')"
 echo "branch/tag: $tag"
+make -j"$(nproc --all)" "clean"
+make -j"$(nproc --all)" "mrproper"
 echo "make options:" $arch_opts $make_opts $host_make_opts
 msg "Generating defconfig from \`make $defconfig\`..."
 if ! make O=out $arch_opts $make_opts $host_make_opts "$defconfig"; then
