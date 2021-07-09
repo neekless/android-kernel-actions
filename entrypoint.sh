@@ -209,7 +209,7 @@ if ! make O=out $arch_opts $make_opts $host_make_opts "$defconfig"; then
     exit 2
 fi
 msg "Begin building kernel..."
-if ! make O=out $arch_opts $make_opts $host_make_opts -j"$(nproc --all)"; then
+if ! make O=out $arch_opts $make_opts $host_make_opts -j"$(nproc --all)" 2>&1; then
     err "Failed building kernel, probably the toolchain is not compatible with the kernel, or kernel source problem"
     exit 3
 fi
