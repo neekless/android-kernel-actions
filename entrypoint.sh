@@ -221,7 +221,7 @@ if [[ -e "$workdir"/"$zipper_path" ]]; then
     cd "$workdir"/"$zipper_path" || exit 127
     rm -rf .git
     zip -r9 "$zip_filename" . || exit 127
-    set_output outfile "$workdir"/"$zipper_path"/"$zip_filename"
+    set_output outfile "$zipper_path"/"$zip_filename"
     cd "$workdir" || exit 127
     exit 0
 else
