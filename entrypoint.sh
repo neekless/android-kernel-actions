@@ -197,7 +197,7 @@ fi
 
 cd "$workdir"/"$kernel_path" || exit 127
 start_time="$(date +%s)"
-date="$(date +%d%m%Y-%I%M)"
+#date="$(date +%d%m%Y-%I%M)"
 tag="$(git branch | sed 's/*\ //g')"
 echo "branch/tag: $tag"
 make -j"$(nproc --all)" "clean"
@@ -215,7 +215,7 @@ if ! make O=out $arch_opts $make_opts $host_make_opts -j"$(nproc --all)" 2>&1; t
 fi
 set_output elapsed_time "$(echo "$(date +%s)"-"$start_time" | bc)"
 msg "Packaging the kernel..."
-zip_filename="${name}-${tag}-${date}.zip"
+zip_filename="${name}-${tag}.zip"
 if [[ -e "$workdir"/"$zipper_path" ]]; then
     cp out/arch/"$arch"/boot/"$image" "$workdir"/"$zipper_path"/"$image"
     cd "$workdir"/"$zipper_path" || exit 127
