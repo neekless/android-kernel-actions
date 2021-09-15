@@ -132,6 +132,39 @@ if [[ $arch = "arm64" ]]; then
         export CLANG_TRIPLE="aarch64-linux-gnu-"
         export CROSS_COMPILE="aarch64-linux-gnu-"
         export CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
+    elif [[ $compiler = vortex-clang/* ]]; then
+        ver="${compiler/vortex-clang\/}"
+        ver_number="${ver/\/binutils}"
+        url="https://gitlab.com/Vijaymalav564/vortex-clang/-/archive/${ver_number}/vortex-clang-${ver_number}.tar.gz"
+        binutils="$([[ $ver = */binutils ]] && echo true || echo false)"
+
+        # Due to different time in container and the host,
+        # disable certificate check
+        echo "Downloading $url"
+        if ! wget --no-check-certificate "$url" -O /tmp/vortex-clang-"${ver_number}".tar.gz &>/dev/null; then
+            err "Failed downloading toolchain, refer to the README for details"
+            exit 1
+        fi
+
+        if $binutils; then
+            make_opts="CC=clang"
+            host_make_opts="HOSTCC=clang HOSTCXX=clang++"
+        else
+            make_opts="CC=clang LD=ld.lld AR=llvm-ar NM=llvm-nm STRIP=llvm-strip OBJCOPY=llvm-objcopy"
+            make_opts+=" OBJDUMP=llvm-objdump READELF=llvm-readelf LLVM_IAS=1"
+            host_make_opts="HOSTCC=clang HOSTCXX=clang++ HOSTLD=ld.lld HOSTAR=llvm-ar"
+        fi
+
+        apt install -y --no-install-recommends libgcc-10-dev || exit 127
+        extract_tarball /tmp/vortex-clang-"${ver_number}".tar.gz /
+        cd /vortex-clang-"${ver_number}"* || exit 127
+        vortex_path="$(pwd)"
+        cd "$workdir"/"$kernel_path" || exit 127
+
+        export PATH="$vortex_path/bin:${PATH}"
+        export CLANG_TRIPLE="aarch64-linux-gnu-"
+        export CROSS_COMPILE="aarch64-linux-gnu-"
+        export CROSS_COMPILE_ARM32="arm-linux-gnueabi-"
     elif [[ $compiler = proton-clang/* ]]; then
         ver="${compiler/proton-clang\/}"
         ver_number="${ver/\/binutils}"
